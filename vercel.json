@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/Patologik_Anatomiya_Yakuniy_Yangi_Format.html"
+    }
+  ]
+}
