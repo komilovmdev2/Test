@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f4f7f4">
-  <title>Patologik anatomiya | Yakuniy sinov</title>
+  <title>Patologik anatomiya | Savollar ro‘yxati</title>
   <style>
     :root {
       color-scheme: light;
@@ -123,6 +123,47 @@
     .source-name { overflow: hidden; color: var(--muted); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
     .toast { min-height: 17px; margin: 8px 0 0; color: var(--coral); font-size: 11px; }
     .empty-state { display: none; padding: 26px; text-align: center; color: var(--muted); }
+    .catalog { display: none; margin-top: 25px; animation: rise .4s ease both; }
+    .catalog-toolbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 18px; margin-bottom: 18px; }
+    .search-box { display: flex; align-items: center; gap: 12px; min-height: 54px; padding: 0 16px; border: 1px solid #bfd0c4; border-radius: 6px; background: var(--paper); box-shadow: 0 8px 26px rgba(25, 51, 42, .05); }
+    .search-icon { color: var(--green); font-size: 23px; line-height: 1; }
+    .search-box input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 15px; }
+    .search-box input::placeholder { color: #899792; }
+    .search-box input:focus-visible { outline: 0; }
+    .clear-search { display: grid; place-items: center; width: 30px; height: 30px; flex: 0 0 auto; border: 0; border-radius: 50%; background: #edf3ef; color: var(--muted); font-size: 20px; }
+    .clear-search[hidden] { display: none; }
+    .catalog-count { display: grid; gap: 2px; min-width: 125px; text-align: right; }
+    .catalog-count strong { color: var(--green-dark); font-size: 14px; }
+    .catalog-count span { color: var(--muted); font-size: 12px; }
+    .question-list { display: grid; gap: 12px; }
+    .question-card { padding: 20px 22px; border: 1px solid var(--line); border-radius: 7px; background: var(--paper); box-shadow: 0 8px 26px rgba(25, 51, 42, .045); }
+    .question-card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 11px; }
+    .question-id { color: var(--green); font-size: 12px; font-weight: 800; }
+    .answer-count { color: var(--muted); font-size: 11px; }
+    .question-card h2 { margin: 0 0 14px; font: 700 20px/1.4 Georgia, "Times New Roman", serif; letter-spacing: 0; white-space: pre-wrap; }
+    .answer-list { display: grid; margin: 0; padding: 0; list-style: none; }
+    .answer-row { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; align-items: start; gap: 10px; padding: 10px 11px; border-top: 1px solid #edf1ee; color: #3f504b; font-size: 14px; }
+    .answer-letter { color: var(--green); font-weight: 800; }
+    .answer-text { min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .answer-row.correct { border-top-color: #c9e2d1; background: #edf7f0; color: #205b43; }
+    .correct-badge { padding: 2px 8px; border-radius: 99px; background: #d9eddf; color: #176444; font-size: 10px; font-weight: 800; white-space: nowrap; }
+    .catalog-empty { display: none; padding: 42px 20px; border: 1px dashed #b9c9bf; border-radius: 7px; color: var(--muted); text-align: center; }
+    .pagination { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 20px; padding: 15px 0; border-top: 1px solid var(--line); }
+    .catalog-button { min-height: 40px; padding: 0 14px; border: 1px solid var(--line); border-radius: 5px; background: #fff; color: var(--ink); font-size: 13px; font-weight: 750; }
+    .catalog-button:hover:not(:disabled) { border-color: #9bbcad; background: #f5faf6; }
+    .catalog-button:disabled { opacity: .45; cursor: not-allowed; }
+    .page-status { color: var(--muted); font-size: 12px; }
+    @media (max-width: 570px) {
+      .catalog-toolbar { grid-template-columns: 1fr; gap: 10px; }
+      .catalog-count { display: flex; justify-content: space-between; min-width: 0; text-align: left; }
+      .search-box { min-height: 50px; padding: 0 12px; }
+      .question-card { padding: 16px 14px; }
+      .question-card h2 { font-size: 18px; }
+      .answer-row { grid-template-columns: 24px minmax(0, 1fr); gap: 8px; padding: 10px 8px; font-size: 13px; }
+      .correct-badge { grid-column: 2; justify-self: start; }
+      .pagination { gap: 8px; }
+      .catalog-button { padding: 0 10px; }
+    }
     .hidden { display: none !important; }
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
     @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -159,15 +200,15 @@
     <header class="topbar">
       <div class="brand">
         <div class="brand-mark" aria-hidden="true">PA</div>
-        <div><div class="brand-name">Patologik anatomiya</div><div class="brand-sub">Yakuniy sinov</div></div>
+        <div><div class="brand-name">Patologik anatomiya</div><div class="brand-sub">Savollar ro‘yxati</div></div>
       </div>
-      <div class="top-note">Mustaqil tayyorgarlik uchun test</div>
+      <div class="top-note">Javob kaliti bilan qidiruv</div>
     </header>
 
     <section class="intro">
-      <div class="eyebrow">Bilimingizni sinab ko'ring</div>
-      <h1>Yakuniy test</h1>
-      <p>Savollarga javob bering, natijangizni ko'ring va kerakli savolga qayting.</p>
+      <div class="eyebrow">Savollar katalogi</div>
+      <h1>Testlar ro‘yxati</h1>
+      <p>Savol raqami, matni yoki variant bo‘yicha qidiring. To‘g‘ri javob har bir savolda ko‘rsatilgan.</p>
     </section>
 
     <section class="load-panel" id="loadPanel" aria-label="Testni yuklash">
@@ -180,6 +221,27 @@
       </div>
     </section>
     <p class="error" id="loadError" role="alert"></p>
+
+    <section class="catalog" id="catalog" aria-label="Savollar katalogi">
+      <div class="catalog-toolbar">
+        <label class="search-box" for="searchInput">
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <input id="searchInput" type="search" autocomplete="off" placeholder="Savol, variant yoki raqam bo‘yicha qidirish">
+          <button class="clear-search" id="clearSearch" type="button" aria-label="Qidiruvni tozalash" hidden>×</button>
+        </label>
+        <div class="catalog-count" aria-live="polite">
+          <strong id="totalCount">0 ta savol</strong>
+          <span id="resultCount">0 ta natija</span>
+        </div>
+      </div>
+      <div class="question-list" id="questionList"></div>
+      <div class="catalog-empty" id="catalogEmpty">Mos savol topilmadi. Boshqa so‘z yoki raqam bilan qidirib ko‘ring.</div>
+      <nav class="pagination" aria-label="Savollar sahifalari">
+        <button class="catalog-button" id="previousPage" type="button">← Oldingi</button>
+        <span class="page-status" id="pageStatus"></span>
+        <button class="catalog-button" id="nextPage" type="button">Keyingi →</button>
+      </nav>
+    </section>
 
     <section class="workspace" id="workspace" aria-label="Test oynasi">
       <article class="quiz-card">
@@ -230,6 +292,14 @@
   <script>
     const loadError = document.getElementById('loadError');
     const workspace = document.getElementById('workspace');
+    const catalog = document.getElementById('catalog');
+    const questionList = document.getElementById('questionList');
+    const searchInput = document.getElementById('searchInput');
+    const clearSearch = document.getElementById('clearSearch');
+    const catalogEmpty = document.getElementById('catalogEmpty');
+    const previousPageButton = document.getElementById('previousPage');
+    const nextPageButton = document.getElementById('nextPage');
+    const pageStatus = document.getElementById('pageStatus');
     const questionText = document.getElementById('questionText');
     const optionsElement = document.getElementById('options');
     const feedbackElement = document.getElementById('feedback');
@@ -245,6 +315,9 @@
     let questions = [];
     let currentIndex = 0;
     const answers = new Map();
+    const pageSize = 20;
+    let visibleQuestions = [];
+    let currentPage = 0;
 
     function parseQuestions(source) {
       const parsed = [];
@@ -310,8 +383,9 @@
         document.getElementById('questionTotal').textContent = ` / ${questions.length}`;
         jumpInput.max = String(questions.length);
         document.getElementById('loadPanel').style.display = 'none';
-        workspace.style.display = 'grid';
-        renderQuestion();
+        workspace.style.display = 'none';
+        catalog.style.display = 'block';
+        filterQuestions();
       } catch (error) {
         document.getElementById('loadTitle').textContent = 'Testni yuklab bo‘lmadi';
         document.getElementById('loadHint').textContent = 'HTML va .qst fayllari bir papkada bo‘lishi va sahifa localhost orqali ochilishi kerak.';
@@ -407,6 +481,94 @@
       jumpMessage.textContent = '';
       currentIndex = target - 1;
       renderQuestion();
+    });
+
+    function filterQuestions() {
+      const query = searchInput.value.trim().toLocaleLowerCase();
+      if (!query) {
+        visibleQuestions = questions;
+      } else if (/^\d+$/.test(query)) {
+        visibleQuestions = questions.filter(question => String(question.id) === query);
+      } else {
+        visibleQuestions = questions.filter(question => [question.id, question.prompt, ...question.options.map(option => option.text)]
+          .join(' ').toLocaleLowerCase().includes(query));
+      }
+      currentPage = 0;
+      renderQuestionPage();
+    }
+
+    function renderQuestionPage() {
+      const pageCount = Math.ceil(visibleQuestions.length / pageSize);
+      const start = currentPage * pageSize;
+      const pageQuestions = visibleQuestions.slice(start, start + pageSize);
+      questionList.replaceChildren();
+      document.getElementById('totalCount').textContent = `${questions.length} ta savol`;
+      document.getElementById('resultCount').textContent = `${visibleQuestions.length} ta natija`;
+      clearSearch.hidden = !searchInput.value;
+      catalogEmpty.style.display = visibleQuestions.length ? 'none' : 'block';
+
+      for (const question of pageQuestions) {
+        const card = document.createElement('article');
+        card.className = 'question-card';
+
+        const cardHead = document.createElement('div');
+        cardHead.className = 'question-card-head';
+        const questionId = document.createElement('span');
+        questionId.className = 'question-id';
+        questionId.textContent = `SAVOL ${question.id}`;
+        const correctCount = question.options.filter(option => option.correct).length;
+        const answerCount = document.createElement('span');
+        answerCount.className = 'answer-count';
+        answerCount.textContent = correctCount > 1 ? `${correctCount} ta to‘g‘ri javob` : '1 ta to‘g‘ri javob';
+        cardHead.append(questionId, answerCount);
+
+        const prompt = document.createElement('h2');
+        prompt.textContent = question.prompt;
+        const list = document.createElement('ol');
+        list.className = 'answer-list';
+
+        question.options.forEach((option, index) => {
+          const row = document.createElement('li');
+          row.className = option.correct ? 'answer-row correct' : 'answer-row';
+          const letter = document.createElement('span');
+          letter.className = 'answer-letter';
+          letter.textContent = `${String.fromCharCode(65 + index)}.`;
+          const text = document.createElement('span');
+          text.className = 'answer-text';
+          text.textContent = option.text;
+          row.append(letter, text);
+          if (option.correct) {
+            const badge = document.createElement('span');
+            badge.className = 'correct-badge';
+            badge.textContent = 'To‘g‘ri javob';
+            row.append(badge);
+          }
+          list.append(row);
+        });
+
+        card.append(cardHead, prompt, list);
+        questionList.append(card);
+      }
+
+      pageStatus.textContent = pageCount ? `${currentPage + 1} / ${pageCount}-sahifa` : '0 sahifa';
+      previousPageButton.disabled = currentPage === 0 || pageCount === 0;
+      nextPageButton.disabled = currentPage >= pageCount - 1 || pageCount === 0;
+    }
+
+    searchInput.addEventListener('input', filterQuestions);
+    clearSearch.addEventListener('click', () => {
+      searchInput.value = '';
+      filterQuestions();
+      searchInput.focus();
+    });
+    previousPageButton.addEventListener('click', () => {
+      if (currentPage > 0) { currentPage--; renderQuestionPage(); }
+    });
+    nextPageButton.addEventListener('click', () => {
+      if (currentPage < Math.ceil(visibleQuestions.length / pageSize) - 1) {
+        currentPage++;
+        renderQuestionPage();
+      }
     });
 
     loadQuestions();
